@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>設定｜発音の旅</title>
+  <meta name="description" content="発音の旅の設定ページ">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="blogin">
+
+  <!-- HEADER -->
+  <header>
+    <nav>
+      <a class="brand" href="index.html">
+        <img src="image/HatsuonNoTabiJaune2.gif" alt="ロゴ">
+      </a>
+
+      <div class="top-nav">
+        <a href="index.html">ホーム</a>
+        <a href="progress.html">進捗</a>
+        <a href="success.html">成績</a>
+        <a href="setting.html" class="active">設定</a>
+        <a href="login.html">ログアウト</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- MAIN -->
+  <main class="settings-page">
+    
+    <section class="settings-section">
+      <h1 class="settings-title">ゲーム設定</h1>
+      <p class="settings-desc">
+        ゲームの音量、速度、使用する単語や文字をカスタマイズできます。
+      </p>
+
+      <!-- Volume -->
+      <div class="setting-item">
+        <div class="setting-label">
+          <span class="setting-label-text">音量</span>
+          <span class="setting-value" id="volume-value">50%</span>
+        </div>
+        <div class="slider-container">
+          <input 
+            type="range" 
+            id="volume-slider" 
+            class="slider" 
+            min="0" 
+            max="100" 
+            value="50"
+          >
+        </div>
+      </div>
+
+      <!-- Musique de fond -->
+      <div class="setting-item">
+        <div class="setting-label">
+          <span class="setting-label-text">背景音楽</span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="bg-music-toggle" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <p class="text-note-top">
+          ゲーム中の背景音楽をON/OFFできます
+        </p>
+      </div>
+
+      <!-- Vitesse de chute - Alphabet -->
+      <div class="setting-item">
+        <div class="setting-label">
+          <span class="setting-label-text">アルファベットゲームの落下速度</span>
+          <span class="setting-value" id="alphabet-speed-value">標準</span>
+        </div>
+        <div class="slider-container">
+          <input 
+            type="range" 
+            id="alphabet-speed-slider" 
+            class="slider" 
+            min="1" 
+            max="5" 
+            value="3"
+          >
+          <div class="slider-meta">
+            <span>遅い</span>
+            <span>標準</span>
+            <span>速い</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vitesse de chute - Mots -->
+      <div class="setting-item">
+        <div class="setting-label">
+          <span class="setting-label-text">単語ゲームの落下速度</span>
+          <span class="setting-value" id="word-speed-value">標準</span>
+        </div>
+        <div class="slider-container">
+          <input 
+            type="range" 
+            id="word-speed-slider" 
+            class="slider" 
+            min="1" 
+            max="5" 
+            value="3"
+          >
+          <div class="slider-meta">
+            <span>遅い</span>
+            <span>標準</span>
+            <span>速い</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sélection des lettres -->
+      <div class="setting-item">
+        <div class="setting-label">
+          <span class="setting-label-text">アルファベットゲームで使用する文字</span>
+        </div>
+        <p class="text-note-bottom">
+          ゲームで使用する文字を選択してください（最低1文字必要）
+        </p>
+        <div class="select-all-buttons">
+          <button class="select-all-btn" id="select-all-letters">すべて選択</button>
+          <button class="select-all-btn" id="deselect-all-letters">すべて解除</button>
+        </div>
+        <div class="letter-selection" id="letter-selection">
+          <!-- Généré par JavaScript -->
+        </div>
+      </div>
+
+      <!-- Sélection des mots -->
+      <div class="setting-item">
+        <div class="setting-label">
+          <span class="setting-label-text">単語ゲームで使用する単語</span>
+        </div>
+        <p class="text-note-bottom">
+          ゲームで使用する単語を選択してください（最低1単語必要）
+        </p>
+        <div class="select-all-buttons">
+          <button class="select-all-btn" id="select-all-words">すべて選択</button>
+          <button class="select-all-btn" id="deselect-all-words">すべて解除</button>
+        </div>
+        <div class="word-selection" id="word-selection">
+          <!-- Généré par JavaScript -->
+        </div>
+      </div>
+
+      <!-- Bouton de sauvegarde -->
+      <button class="save-button" id="save-settings">設定を保存</button>
+      <p class="save-message" id="save-message">設定を保存しました！</p>
+    </section>
+
+  </main>
+
+  <script>
+    // --- Lettres ---
+    const ALL_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+
+    // --- Mots par défaut ---
+    const DEFAULT_WORDS = [
+      "bonjour", "merci", "au revoir", "bonsoir", "salut",
+      "manger", "boire", "dormir", "aimer", "parler",
+      "maison", "voiture", "chien", "chat", "livre",
+      "école", "étudiant", "professeur", "cours", "examen",
+      "pomme", "banane", "orange", "pain", "eau",
+      "rouge", "bleu", "vert", "jaune", "noir",
+      "un", "deux", "trois", "quatre", "cinq",
+      "lundi", "mardi", "mercredi", "jeudi", "vendredi",
+      "janvier", "février", "mars", "avril", "mai",
+      "soleil", "lune", "étoile", "ciel", "nuage",
+      "famille", "père", "mère", "frère", "sœur",
+      "ami", "amie", "travail", "vacances", "weekend"
+    ];
+
+    // --- Récupérer les mots personnalisés depuis la DB locale ---
+    function getCustomWords() {
+      try {
+        const data = JSON.parse(localStorage.getItem("userWords") || "[]");
+        return data.map(w => w.fr).filter(Boolean);
+      } catch (e) {
+        return [];
+      }
+    }
+
+    async function fetchWordsFromApi() {
+      try {
+        const res = await fetch("http://localhost:3000/words");
+        if (!res.ok) return null;
+        const data = await res.json();
+        localStorage.setItem("userWords", JSON.stringify(data));
+        return data.map(w => w.fr).filter(Boolean);
+      } catch (e) {
+        console.warn("API words indisponible", e);
+        return null;
+      }
+    }
+
+    function getAllWordsList() {
+      // Utiliser uniquement les mots de l'API (sans DEFAULT_WORDS)
+      const custom = getCustomWords();
+      return custom;
+    }
+
+    let WORD_LIST = [];
+
+    // --- Charger les paramètres depuis localStorage ---
+    async function loadSettings() {
+      const settings = JSON.parse(localStorage.getItem("gameSettings") || "{}");
+
+      // Volume
+      const volume = settings.volume !== undefined ? settings.volume : 50;
+      document.getElementById("volume-slider").value = volume;
+      document.getElementById("volume-value").textContent = volume + "%";
+
+      // Musique de fond
+      const bgMusic = settings.bgMusic !== undefined ? settings.bgMusic : true;
+      document.getElementById("bg-music-toggle").checked = bgMusic;
+
+      // Vitesse alphabet
+      const alphabetSpeed = settings.alphabetSpeed !== undefined ? settings.alphabetSpeed : 3;
+      document.getElementById("alphabet-speed-slider").value = alphabetSpeed;
+      updateSpeedLabel("alphabet", alphabetSpeed);
+
+      // Vitesse mots
+      const wordSpeed = settings.wordSpeed !== undefined ? settings.wordSpeed : 3;
+      document.getElementById("word-speed-slider").value = wordSpeed;
+      updateSpeedLabel("word", wordSpeed);
+
+      // Lettres sélectionnées
+      const selectedLetters = settings.selectedLetters || ALL_LETTERS;
+      displayLetterSelection(selectedLetters);
+
+      // Mots sélectionnés - Toujours récupérer depuis l'API pour avoir la liste à jour
+      const apiWords = await fetchWordsFromApi();
+      if (apiWords && apiWords.length > 0) {
+        WORD_LIST = apiWords;
+        // Filtrer les mots sélectionnés pour ne garder que ceux qui existent encore
+        const existingSelectedWords = (settings.selectedWords || []).filter(word => apiWords.includes(word));
+        settings.selectedWords = existingSelectedWords.length > 0 ? existingSelectedWords : apiWords;
+        localStorage.setItem("gameSettings", JSON.stringify(settings));
+      } else {
+        // Fallback sur localStorage si API indisponible
+        WORD_LIST = getCustomWords();
+        settings.selectedWords = settings.selectedWords && settings.selectedWords.length
+          ? settings.selectedWords.filter(word => WORD_LIST.includes(word))
+          : (WORD_LIST.length > 0 ? WORD_LIST : []);
+      }
+      displayWordSelection(settings.selectedWords);
+    }
+
+    // --- Mise à jour du label de vitesse ---
+    function updateSpeedLabel(type, value) {
+      const labels = {
+        1: "とても遅い",
+        2: "遅い",
+        3: "標準",
+        4: "速い",
+        5: "とても速い"
+      };
+      const elementId = type === "alphabet" ? "alphabet-speed-value" : "word-speed-value";
+      document.getElementById(elementId).textContent = labels[value] || "標準";
+    }
+
+    // --- Afficher la sélection des lettres ---
+    function displayLetterSelection(selectedLetters) {
+      const container = document.getElementById("letter-selection");
+      container.innerHTML = ALL_LETTERS.map(letter => {
+        const checked = selectedLetters.includes(letter);
+        return `
+          <label class="letter-checkbox ${checked ? 'checked' : ''}">
+            <input type="checkbox" value="${letter}" ${checked ? 'checked' : ''}>
+            ${letter}
+          </label>
+        `;
+      }).join("");
+
+      // Ajouter les event listeners
+      container.querySelectorAll("input[type='checkbox']").forEach(checkbox => {
+        checkbox.addEventListener("change", (e) => {
+          const label = e.target.closest(".letter-checkbox");
+          if (e.target.checked) {
+            label.classList.add("checked");
+          } else {
+            label.classList.remove("checked");
+          }
+        });
+      });
+    }
+
+    // --- Afficher la sélection des mots ---
+    function displayWordSelection(selectedWords) {
+      const container = document.getElementById("word-selection");
+      container.innerHTML = WORD_LIST.map(word => {
+        const checked = selectedWords.includes(word);
+        return `
+          <div class="word-checkbox">
+            <input type="checkbox" value="${word}" id="word-${word}" ${checked ? 'checked' : ''}>
+            <label for="word-${word}">${word}</label>
+          </div>
+        `;
+      }).join("");
+    }
+
+    // --- Sélectionner toutes les lettres ---
+    document.getElementById("select-all-letters").addEventListener("click", () => {
+      document.querySelectorAll("#letter-selection input[type='checkbox']").forEach(cb => {
+        cb.checked = true;
+        cb.closest(".letter-checkbox").classList.add("checked");
+      });
+    });
+
+    document.getElementById("deselect-all-letters").addEventListener("click", () => {
+      document.querySelectorAll("#letter-selection input[type='checkbox']").forEach(cb => {
+        cb.checked = false;
+        cb.closest(".letter-checkbox").classList.remove("checked");
+      });
+    });
+
+    // --- Sélectionner tous les mots ---
+    document.getElementById("select-all-words").addEventListener("click", () => {
+      document.querySelectorAll("#word-selection input[type='checkbox']").forEach(cb => {
+        cb.checked = true;
+      });
+    });
+
+    document.getElementById("deselect-all-words").addEventListener("click", () => {
+      document.querySelectorAll("#word-selection input[type='checkbox']").forEach(cb => {
+        cb.checked = false;
+      });
+    });
+
+    // --- Event listeners pour les sliders ---
+    document.getElementById("volume-slider").addEventListener("input", (e) => {
+      document.getElementById("volume-value").textContent = e.target.value + "%";
+    });
+
+    document.getElementById("alphabet-speed-slider").addEventListener("input", (e) => {
+      updateSpeedLabel("alphabet", parseInt(e.target.value));
+    });
+
+    document.getElementById("word-speed-slider").addEventListener("input", (e) => {
+      updateSpeedLabel("word", parseInt(e.target.value));
+    });
+
+    // Initialisation
+    window.addEventListener("load", () => {
+      loadSettings();
+    });
+
+    // --- Sauvegarder les paramètres ---
+    document.getElementById("save-settings").addEventListener("click", () => {
+      // Récupérer les valeurs
+      const volume = parseInt(document.getElementById("volume-slider").value);
+      const bgMusic = document.getElementById("bg-music-toggle").checked;
+      const alphabetSpeed = parseInt(document.getElementById("alphabet-speed-slider").value);
+      const wordSpeed = parseInt(document.getElementById("word-speed-slider").value);
+
+      // Récupérer les lettres sélectionnées
+      const selectedLetters = Array.from(
+        document.querySelectorAll("#letter-selection input[type='checkbox']:checked")
+      ).map(cb => cb.value);
+
+      // Récupérer les mots sélectionnés
+      const selectedWords = Array.from(
+        document.querySelectorAll("#word-selection input[type='checkbox']:checked")
+      ).map(cb => cb.value);
+
+      // Validation
+      if (selectedLetters.length === 0) {
+        alert("アルファベットゲームでは最低1文字を選択してください。");
+        return;
+      }
+
+      if (selectedWords.length === 0) {
+        alert("単語ゲームでは最低1単語を選択してください。");
+        return;
+      }
+
+      // Sauvegarder dans localStorage
+      const settings = {
+        volume,
+        bgMusic,
+        alphabetSpeed,
+        wordSpeed,
+        selectedLetters,
+        selectedWords
+      };
+
+      localStorage.setItem("gameSettings", JSON.stringify(settings));
+
+      // Afficher le message de confirmation
+      const messageEl = document.getElementById("save-message");
+      messageEl.classList.add("show");
+      setTimeout(() => {
+        messageEl.classList.remove("show");
+      }, 3000);
+    });
+
+    // --- Initialisation ---
+    window.addEventListener("load", loadSettings);
+  </script>
+
+</body>
+</html>

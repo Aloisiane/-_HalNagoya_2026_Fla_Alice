@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>進捗｜発音の旅</title>
+  <meta name="description" content="発音の旅の学習進捗ページ">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body class="blogin">
+
+  <!-- HEADER -->
+  <header>
+    <nav>
+      <a class="brand" href="index.html">
+        <img src="image/HatsuonNoTabiJaune2.gif" alt="ロゴ">
+      </a>
+
+      <div class="top-nav">
+        <a href="index.html">ホーム</a>
+        <a href="progress.html" class="active">進捗</a>
+        <a href="success.html">成績</a>
+        <a href="setting.html" >設定</a>
+        <a href="login.html">ログアウト</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- MAIN -->
+  <main class="progress-page">
+
+    <!-- ✅ Une seule grande carte comme settings.html -->
+    <section class="progress-section">
+      <h1 class="progress-title">学習の進捗・分析</h1>
+      <p class="progress-desc">
+        統計データと分析で、学習パターンを見える化します。<br>
+        スコア推移、週比較、モード分析、履歴をまとめて確認できます。
+      </p>
+
+      <!-- 1) ユーザー概要 -->
+      <div class="setting-item">
+        <div class="setting-label">
+          <span class="setting-label-text">ユーザー概要</span>
+          <span class="setting-value">Summary</span>
+        </div>
+
+        <div class="mini-grid">
+          <div class="mini-card">
+            <strong id="user-name">ゲスト</strong>
+            <span>ユーザー名</span>
+          </div>
+          <div class="mini-card">
+            <strong><span id="total-score">0</span> pt</strong>
+            <span>累計スコア</span>
+          </div>
+          <div class="mini-card">
+            <strong><span id="total-plays">0</span> 回</strong>
+            <span>総プレイ回数</span>
+          </div>
+          <div class="mini-card">
+            <strong id="last-played">-</strong>
+            <span>最後にプレイした日</span>
+          </div>
+        </div>
+
+        <p class="text-note">
+          学習開始日：<span id="start-date">-</span>
+        </p>
+      </div>
+
+      <!-- 2) 今週 vs 先週 -->
+      <div class="setting-item">
+        <div class="setting-label">
+          <span class="setting-label-text">今週 vs 先週の比較</span>
+          <span class="setting-value">Weekly</span>
+        </div>
+
+        <div class="mini-grid">
+          <div class="mini-card">
+            <strong id="weekly-plays-comp">0</strong>
+            <span>今週のプレイ回数</span>
+          </div>
+          <div class="mini-card">
+            <strong id="weekly-avg-comp">0</strong>
+            <span>今週の平均スコア</span>
+          </div>
+          <div class="mini-card">
+            <strong id="lastweek-plays-comp">0</strong>
+            <span>先週のプレイ回数</span>
+          </div>
+          <div class="mini-card">
+            <strong id="lastweek-avg-comp">0</strong>
+            <span>先週の平均スコア</span>
+          </div>
+        </div>
+
+        <p id="comparison-trend" class="text-center-muted"></p>
+      </div>
+
+      <!-- 3) ゲーム別進捗 -->
+      <div class="setting-item">
+        <div class="setting-label">
+          <span class="setting-label-text">ゲーム別の進捗</span>
+          <span class="setting-value">Games</span>
+        </div>
+
+        <!-- Alphabet -->
+        <div class="panel-soft">
+          <div class="setting-label setting-label--compact">
+            <span class="setting-label-text">アルファベットのゲーム</span>
+            <span class="setting-value" id="alphabet-trend">-</span>
+          </div>
+
+          <div class="progress-row">
+            <span class="progress-label">平均スコア</span>
+            <div class="progress-bar">
+              <div class="progress-bar-fill" id="alphabet-avg-bar"></div>
+            </div>
+            <span class="progress-percent" id="alphabet-avg-score">0 pt</span>
+          </div>
+
+          <div class="progress-chart" id="alphabet-chart"></div>
+
+          <p class="text-muted">
+            平均：<span id="alphabet-average" class="text-strong-accent">0 pt</span>　
+            回数：<span id="alphabet-plays" class="text-strong-accent">0 回</span>
+          </p>
+        </div>
+
+        <!-- Word -->
+        <div class="panel-soft">
+          <div class="setting-label setting-label--compact">
+            <span class="setting-label-text">フランス語の単語のゲーム</span>
+            <span class="setting-value" id="word-trend">-</span>
+          </div>
+
+          <div class="progress-row">
+            <span class="progress-label">平均スコア</span>
+            <div class="progress-bar">
+              <div class="progress-bar-fill" id="word-avg-bar"></div>
+            </div>
+            <span class="progress-percent" id="word-avg-score">0 pt</span>
+          </div>
+
+          <div class="progress-chart" id="word-chart"></div>
+
+          <p class="text-muted">
+            平均：<span id="word-average" class="text-strong-accent">0 pt</span>　
+            回数：<span id="word-plays" class="text-strong-accent">0 回</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- 4) モード別 -->
+      <div class="setting-item">
+        <div class="setting-label">
+          <span class="setting-label-text">モード別パフォーマンス分析</span>
+          <span class="setting-value">Modes</span>
+        </div>
+        <div class="mini-grid" id="mode-stats-container"></div>
+      </div>
+
+      <!-- 5) 指標 -->
+      <div class="setting-item">
+        <div class="setting-label">
+          <span class="setting-label-text">パフォーマンス指標</span>
+          <span class="setting-value">Stats</span>
+        </div>
+
+        <div class="mini-grid">
+          <div class="mini-card">
+            <strong id="best-score-stat">0</strong>
+            <span>最高スコア</span>
+          </div>
+          <div class="mini-card">
+            <strong id="worst-score-stat">0</strong>
+            <span>最低スコア</span>
+          </div>
+          <div class="mini-card">
+            <strong id="median-score-stat">0</strong>
+            <span>中央値</span>
+          </div>
+          <div class="mini-card">
+            <strong id="std-dev-stat">0</strong>
+            <span>標準偏差</span>
+          </div>
+        </div>
+
+        <p id="performance-analysis" class="text-center-muted"></p>
+      </div>
+
+      <!-- 6) 時間帯 -->
+      <div class="setting-item">
+        <div class="setting-label">
+          <span class="setting-label-text">時間帯別パフォーマンス</span>
+          <span class="setting-value">Time</span>
+        </div>
+        <div id="time-analysis-container" class="mt-10"></div>
+      </div>
+
+      <!-- 7) 履歴 -->
+      <div class="setting-item">
+        <div class="setting-label">
+          <span class="setting-label-text">全プレイ履歴</span>
+          <span class="setting-value">History</span>
+        </div>
+
+        <p class="text-note-tight">
+          フィルターでゲームやモード別に表示できます。
+        </p>
+
+        <div class="filter-buttons">
+          <button class="filter-btn active" data-filter="all">すべて</button>
+          <button class="filter-btn" data-filter="alphabet">アルファベット</button>
+          <button class="filter-btn" data-filter="word">単語</button>
+          <button class="filter-btn" data-filter="time-attack">タイムアタック</button>
+          <button class="filter-btn" data-filter="survival">サバイバル</button>
+        </div>
+
+        <div class="history-table-wrapper">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>日付・時刻</th>
+                <th>ゲーム</th>
+                <th>モード</th>
+                <th>スコア</th>
+                <th>変化</th>
+              </tr>
+            </thead>
+            <tbody id="history-table-body">
+              <tr>
+                <td colspan="5" class="table-empty">
+                  まだプレイ履歴がありません。ゲームをプレイして記録を作りましょう！
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <script>
+    // --- ユーザー情報の取得 ---
+    function loadUserInfo() {
+      const userStr = localStorage.getItem("user");
+      if (userStr) {
+        try {
+          const user = JSON.parse(userStr);
+          document.getElementById("user-name").textContent = user.name || "ゲスト";
+        } catch (e) {
+          console.error("Erreur parsing user:", e);
+        }
+      }
+    }
+
+    // --- Chargement des scores ---
+    function getLocalScores() {
+      const alphabetScores = JSON.parse(localStorage.getItem("alphabetScores") || "[]");
+      const wordScores = JSON.parse(localStorage.getItem("wordScores") || "[]");
+      const allScores = [...alphabetScores, ...wordScores].sort((a, b) =>
+        new Date(a.date || 0) - new Date(b.date || 0)
+      );
+      return { alphabetScores, wordScores, allScores };
+    }
+
+    async function fetchScores() {
+      const local = getLocalScores();
+      const token = localStorage.getItem("token");
+      if (!token) return local;
+
+      try {
+        const response = await fetch("http://localhost:3000/scores", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (!response.ok) throw new Error("HTTP " + response.status);
+        const rows = await response.json();
+        const mapped = rows.map(row => ({
+          game: row.game,
+          mode: row.mode,
+          score: row.score,
+          date: row.played_at
+        }));
+        const alphabetScores = mapped.filter(s => s.game === "alphabet");
+        const wordScores = mapped.filter(s => s.game === "word");
+        const allScores = mapped.sort((a, b) =>
+          new Date(a.date || 0) - new Date(b.date || 0)
+        );
+        return { alphabetScores, wordScores, allScores };
+      } catch (e) {
+        console.error("Erreur fetch scores:", e);
+        return local;
+      }
+    }
+
+    let cachedScores = { alphabetScores: [], wordScores: [], allScores: [] };
+
+    // --- スコアの読み込み et calcul des statistiques ---
+    async function loadProgress() {
+      cachedScores = await fetchScores();
+      const { alphabetScores, wordScores, allScores } = cachedScores;
+
+      // Statistiques globales
+      const totalScore = allScores.reduce((sum, s) => sum + (s.score || 0), 0);
+      document.getElementById("total-score").textContent = totalScore;
+      document.getElementById("total-plays").textContent = allScores.length;
+
+      if (allScores.length > 0) {
+        const lastDate = new Date(allScores[allScores.length - 1].date || Date.now());
+        document.getElementById("last-played").textContent = lastDate.toLocaleDateString("ja-JP");
+
+        const firstDate = new Date(allScores[0].date || Date.now());
+        document.getElementById("start-date").textContent = firstDate.toLocaleDateString("ja-JP");
+      } else {
+        document.getElementById("last-played").textContent = "-";
+        document.getElementById("start-date").textContent = "-";
+      }
+
+      // Statistiques par jeu
+      updateGameStats("alphabet", alphabetScores);
+      updateGameStats("word", wordScores);
+
+      // Comparaison semaine
+      updateWeeklyComparison(allScores);
+
+      // Graphiques
+      drawChart("alphabet", alphabetScores);
+      drawChart("word", wordScores);
+
+      // Analyses avancées
+      displayModeStats(allScores);
+      displayPerformanceStats(allScores);
+      displayTimeAnalysis(allScores);
+
+      // Historique complet
+      displayHistory(allScores);
+    }
+
+    // --- Mise à jour des statistiques d'un jeu ---
+    function updateGameStats(gameType, scores) {
+      const prefix = gameType === "alphabet" ? "alphabet" : "word";
+
+      if (scores.length === 0) {
+        document.getElementById(`${prefix}-average`).textContent = "0 pt";
+        document.getElementById(`${prefix}-plays`).textContent = "0 回";
+        document.getElementById(`${prefix}-trend`).textContent = "-";
+        document.getElementById(`${prefix}-avg-score`).textContent = "0 pt";
+        document.getElementById(`${prefix}-avg-bar`).style.width = "0%";
+        return;
+      }
+
+      const avg = Math.round(scores.reduce((sum, s) => sum + (s.score || 0), 0) / scores.length);
+      document.getElementById(`${prefix}-average`).textContent = avg + " pt";
+      document.getElementById(`${prefix}-plays`).textContent = scores.length + " 回";
+      document.getElementById(`${prefix}-avg-score`).textContent = avg + " pt";
+
+      // Barre de progression (100pt = 100%)
+      const percent = Math.min(100, (avg / 100) * 100);
+      document.getElementById(`${prefix}-avg-bar`).style.width = percent + "%";
+
+      // Tendance
+      if (scores.length >= 10) {
+        const recent5 = scores.slice(-5);
+        const previous5 = scores.slice(-10, -5);
+        const recentAvg = recent5.reduce((sum, s) => sum + (s.score || 0), 0) / 5;
+        const previousAvg = previous5.reduce((sum, s) => sum + (s.score || 0), 0) / 5;
+
+        const diff = recentAvg - previousAvg;
+        if (diff > 5) {
+          document.getElementById(`${prefix}-trend`).innerHTML =
+            `<span class="trend-up trend-indicator">📈 向上 (+${Math.round(diff)}pt)</span>`;
+        } else if (diff < -5) {
+          document.getElementById(`${prefix}-trend`).innerHTML =
+            `<span class="trend-down trend-indicator">📉 下降 (${Math.round(diff)}pt)</span>`;
+        } else {
+          document.getElementById(`${prefix}-trend`).innerHTML =
+            `<span class="trend-stable trend-indicator">➡️ 安定</span>`;
+        }
+      } else {
+        document.getElementById(`${prefix}-trend`).textContent = "データ不足";
+      }
+    }
+
+    // --- Comparaison semaine ---
+    function updateWeeklyComparison(allScores) {
+      const now = new Date();
+      const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      const twoWeeksAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
+
+      const thisWeek = allScores.filter(s => new Date(s.date || 0) >= weekAgo);
+      const lastWeek = allScores.filter(s => {
+        const d = new Date(s.date || 0);
+        return d >= twoWeeksAgo && d < weekAgo;
+      });
+
+      document.getElementById("weekly-plays-comp").textContent = thisWeek.length;
+      document.getElementById("lastweek-plays-comp").textContent = lastWeek.length;
+
+      const thisWeekAvg = thisWeek.length > 0
+        ? Math.round(thisWeek.reduce((sum, s) => sum + (s.score || 0), 0) / thisWeek.length)
+        : 0;
+      const lastWeekAvg = lastWeek.length > 0
+        ? Math.round(lastWeek.reduce((sum, s) => sum + (s.score || 0), 0) / lastWeek.length)
+        : 0;
+
+      document.getElementById("weekly-avg-comp").textContent = thisWeekAvg + " pt";
+      document.getElementById("lastweek-avg-comp").textContent = lastWeekAvg + " pt";
+
+      const trendMsg = document.getElementById("comparison-trend");
+      if (thisWeek.length === 0 && lastWeek.length === 0) {
+        trendMsg.textContent = "まだデータがありません";
+        trendMsg.style.color = "#666";
+      } else if (thisWeekAvg > lastWeekAvg) {
+        trendMsg.innerHTML = `📈 今週は先週より平均 <strong>+${thisWeekAvg - lastWeekAvg}pt</strong> 向上しています！`;
+        trendMsg.style.color = "#2c974b";
+      } else if (thisWeekAvg < lastWeekAvg) {
+        trendMsg.innerHTML = `📉 今週は先週より平均 <strong>${thisWeekAvg - lastWeekAvg}pt</strong> 下がっています`;
+        trendMsg.style.color = "#d93025";
+      } else {
+        trendMsg.textContent = "➡️ 今週と先週の平均は同じです";
+        trendMsg.style.color = "#666";
+      }
+    }
+
+    // --- Dessiner le graphique de progression ---
+    function drawChart(gameType, scores) {
+      const chartEl = document.getElementById(`${gameType}-chart`);
+      chartEl.innerHTML = "";
+
+      if (scores.length === 0) {
+        chartEl.innerHTML = '<p class="empty-chart empty-chart--padded">データがありません</p>';
+        return;
+      }
+
+      const recentScores = scores.slice(-10);
+      const maxScore = Math.max(...recentScores.map(s => s.score || 0), 1);
+
+      recentScores.forEach(score => {
+        const bar = document.createElement("div");
+        bar.className = "chart-bar";
+        const height = ((score.score || 0) / maxScore) * 100;
+        bar.style.height = height + "%";
+        bar.setAttribute("data-value", score.score || 0);
+        bar.title = `スコア: ${score.score || 0}pt`;
+        chartEl.appendChild(bar);
+      });
+    }
+
+    // --- Afficher l'historique complet ---
+    let currentFilter = "all";
+    function displayHistory(allScores) {
+      const tbody = document.getElementById("history-table-body");
+
+      let filteredScores = allScores;
+      if (currentFilter !== "all") {
+        if (currentFilter === "alphabet") {
+          filteredScores = allScores.filter(s => s.game === "alphabet");
+        } else if (currentFilter === "word") {
+          filteredScores = allScores.filter(s => s.game === "word");
+        } else if (currentFilter === "time-attack" || currentFilter === "survival") {
+          filteredScores = allScores.filter(s => s.mode === currentFilter);
+        }
+      }
+
+      filteredScores.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+
+      if (filteredScores.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" class="table-empty">
+              フィルター条件に一致する履歴がありません。
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = filteredScores.map((score, index) => {
+        const date = new Date(score.date || Date.now());
+        const dateStr = date.toLocaleDateString("ja-JP");
+        const timeStr = date.toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" });
+        const gameName = score.game === "alphabet" ? "アルファベットのゲーム" : "単語のゲーム";
+        const modeName = score.mode === "time-attack" ? "タイムアタック" : "サバイバル";
+
+        let diffHtml = "-";
+        if (index < filteredScores.length - 1) {
+          const prevScore = filteredScores[index + 1].score || 0;
+          const currentScore = score.score || 0;
+          const diff = currentScore - prevScore;
+          if (diff > 0) diffHtml = `<span class="diff-positive">+${diff}</span>`;
+          else if (diff < 0) diffHtml = `<span class="diff-negative">${diff}</span>`;
+          else diffHtml = `<span class="diff-neutral">±0</span>`;
+        }
+
+        return `
+          <tr>
+            <td>${dateStr} ${timeStr}</td>
+            <td>${gameName}</td>
+            <td>${modeName}</td>
+            <td><strong>${score.score || 0} pt</strong></td>
+            <td>${diffHtml}</td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    // --- Statistiques par mode ---
+    function displayModeStats(allScores) {
+      const container = document.getElementById("mode-stats-container");
+
+      const timeAttackScores = allScores.filter(s => s.mode === "time-attack");
+      const survivalScores = allScores.filter(s => s.mode === "survival");
+
+      const timeAttackAvg = timeAttackScores.length > 0
+        ? Math.round(timeAttackScores.reduce((sum, s) => sum + (s.score || 0), 0) / timeAttackScores.length)
+        : 0;
+      const survivalAvg = survivalScores.length > 0
+        ? Math.round(survivalScores.reduce((sum, s) => sum + (s.score || 0), 0) / survivalScores.length)
+        : 0;
+
+      container.innerHTML = `
+        <div class="mini-card">
+          <strong>${timeAttackAvg} pt</strong>
+          <span>タイムアタック平均 (${timeAttackScores.length}回)</span>
+        </div>
+        <div class="mini-card">
+          <strong>${survivalAvg} pt</strong>
+          <span>サバイバル平均 (${survivalScores.length}回)</span>
+        </div>
+        <div class="mini-card">
+          <strong>${timeAttackScores.length > 0 ? Math.max(...timeAttackScores.map(s => s.score || 0)) : 0} pt</strong>
+          <span>タイムアタック最高</span>
+        </div>
+        <div class="mini-card">
+          <strong>${survivalScores.length > 0 ? Math.max(...survivalScores.map(s => s.score || 0)) : 0} pt</strong>
+          <span>サバイバル最高</span>
+        </div>
+      `;
+    }
+
+    // --- Statistiques de performance détaillées ---
+    function displayPerformanceStats(allScores) {
+      if (allScores.length === 0) {
+        document.getElementById("best-score-stat").textContent = "0";
+        document.getElementById("worst-score-stat").textContent = "0";
+        document.getElementById("median-score-stat").textContent = "0";
+        document.getElementById("std-dev-stat").textContent = "0";
+        document.getElementById("performance-analysis").textContent = "データが不足しています";
+        return;
+      }
+
+      const scores = allScores.map(s => s.score || 0).sort((a, b) => a - b);
+      const best = Math.max(...scores);
+      const worst = Math.min(...scores);
+      const median = scores.length % 2 === 0
+        ? (scores[scores.length / 2 - 1] + scores[scores.length / 2]) / 2
+        : scores[Math.floor(scores.length / 2)];
+
+      const mean = scores.reduce((sum, s) => sum + s, 0) / scores.length;
+      const variance = scores.reduce((sum, s) => sum + Math.pow(s - mean, 2), 0) / scores.length;
+      const stdDev = Math.sqrt(variance);
+
+      document.getElementById("best-score-stat").textContent = best + " pt";
+      document.getElementById("worst-score-stat").textContent = worst + " pt";
+      document.getElementById("median-score-stat").textContent = Math.round(median) + " pt";
+      document.getElementById("std-dev-stat").textContent = Math.round(stdDev) + " pt";
+
+      const analysisEl = document.getElementById("performance-analysis");
+      const consistency = stdDev < 15 ? "高い" : stdDev < 30 ? "中程度" : "低い";
+      const trend = best - worst > 50 ? "大きな変動があります" : "比較的安定しています";
+
+      analysisEl.innerHTML = `
+        <strong>分析結果：</strong>スコアの一貫性は<strong>${consistency}</strong>です。
+        ${trend}。${best - worst > 50 ? "より安定したスコアを目指しましょう。" : "良い調子です！"}
+      `;
+    }
+
+    // --- Analyse temporelle ---
+    function displayTimeAnalysis(allScores) {
+      const container = document.getElementById("time-analysis-container");
+
+      if (allScores.length === 0) {
+        container.innerHTML = '<p class="empty-chart">データがありません</p>';
+        return;
+      }
+
+      const hourGroups = {};
+      allScores.forEach(score => {
+        const date = new Date(score.date || Date.now());
+        const hour = date.getHours();
+        const hourKey = Math.floor(hour / 3) * 3;
+        const key = `${hourKey}:00-${hourKey + 3}:00`;
+
+        if (!hourGroups[key]) hourGroups[key] = [];
+        hourGroups[key].push(score.score || 0);
+      });
+
+      const timeStats = Object.entries(hourGroups).map(([time, scores]) => ({
+        time,
+        avg: Math.round(scores.reduce((sum, s) => sum + s, 0) / scores.length),
+        count: scores.length
+      })).sort((a, b) => parseInt(a.time.split(':')[0]) - parseInt(b.time.split(':')[0]));
+
+      const maxAvg = Math.max(...timeStats.map(t => t.avg), 1);
+
+      container.innerHTML = timeStats.map(stat => {
+        const barWidth = (stat.avg / maxAvg) * 100;
+        return `
+          <div class="time-stat">
+            <div class="time-stat-row">
+              <span class="time-stat-label">${stat.time}</span>
+              <span class="time-stat-value">${stat.avg} pt (${stat.count}回)</span>
+            </div>
+            <div class="time-stat-bar">
+              <div class="time-stat-bar-fill" data-width="${barWidth}"></div>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      const bestTime = timeStats.reduce((best, current) => current.avg > best.avg ? current : best);
+
+      container.innerHTML += `
+        <div class="time-best">
+          <strong>💡 最適な時間帯：</strong>
+          <span>${bestTime.time}に最も良いスコア（平均${bestTime.avg}pt）を出しています</span>
+        </div>
+      `;
+      container.querySelectorAll(".time-stat-bar-fill").forEach((bar) => {
+        const width = parseFloat(bar.dataset.width || "0");
+        if (!Number.isNaN(width)) {
+          bar.style.width = `${width}%`;
+        }
+      });
+    }
+
+    // --- Gestion des filtres ---
+    document.querySelectorAll(".filter-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        currentFilter = btn.dataset.filter;
+
+        displayHistory(cachedScores.allScores);
+      });
+    });
+
+    // --- Initialisation ---
+    window.addEventListener("load", () => {
+      loadUserInfo();
+      loadProgress().catch((e) => console.error("Erreur loadProgress:", e));
+    });
+  </script>
+
+</body>
+</html>

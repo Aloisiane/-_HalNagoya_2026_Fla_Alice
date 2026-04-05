@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>新規登録｜発音の旅</title>
+  <meta name="description" content="発音の旅の会員登録ページ">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="blogin">
+  <!-- HEADER -->
+  <header>
+    <nav>
+      <a class="brand" href="login.html"><img src="image/HatsuonNoTabiJaune2.gif" alt="ロゴ"></a>
+      <div class="top-nav">
+        <a href="login.html">ログイン</a>
+        <a href="register.html">新規登録</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- MAIN -->
+  <main class="auth-page">
+    <section class="auth-card">
+      <h1 class="auth-title">
+        <img class="title-img" src="image/Register.png" alt="新規会員登録">
+      </h1>
+      <p class="auth-lead">
+        学習の記録を保存するために、<br>
+        会員登録を行ってください。
+      </p>
+
+      <!-- FORMULAIRE = JAVASCRIPT HANDLE -->
+      <form class="auth-form" id="registerForm">
+        <div class="auth-field">
+          <label for="name">お名前</label>
+          <input type="text" id="name" name="name" required placeholder="山田 太郎">
+        </div>
+
+        <div class="auth-field">
+          <label for="reg-email">メールアドレス</label>
+          <input type="email" id="reg-email" name="email" required placeholder="example@mail.com">
+        </div>
+
+        <div class="auth-field">
+          <label for="reg-password">パスワード</label>
+          <input type="password" id="reg-password" name="password" required placeholder="8文字以上を推奨">
+        </div>
+
+        <button type="submit" class="auth-btn primary-btn">会員登録する</button>
+      </form>
+
+      <p id="message" class="form-message form-message--error form-message--center form-message--spaced-lg"></p>
+
+      <div class="auth-footer-link">
+        <p>すでにアカウントをお持ちの方はこちら</p>
+        <a href="login.html">ログイン画面へ戻る</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- JAVASCRIPT POUR ENVOYER LES DONNÉES À NODE.JS -->
+  <script>
+document.getElementById("registerForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const name = document.getElementById("name").value;
+    const email = document.getElementById("reg-email").value;
+    const password = document.getElementById("reg-password").value;
+
+    const response = await fetch("http://localhost:3000/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password })
+    });
+
+    const result = await response.json();
+    const messageEl = document.getElementById("message");
+
+    if (result.message === "Inscription réussie") {
+        messageEl.textContent = "登録が完了しました";
+        messageEl.style.color = "green";
+        setTimeout(() => { window.location.href = "login.html"; }, 1500);
+    } else {
+        messageEl.textContent = result.message;
+        messageEl.style.color = "red";
+    }
+});
+</script>
+
+
+</body>
+</html>

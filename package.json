@@ -1,0 +1,18 @@
+{
+  "name": "auth-app",
+  "version": "1.0.0",
+  "description": "Application Node.js + MySQL Auth",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "body-parser": "^2.2.1",
+    "cors": "^2.8.5",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.15.3"
+  }
+}

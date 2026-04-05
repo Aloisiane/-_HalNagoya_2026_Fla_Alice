@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ゲームモード選択</title>
+  <meta name="description" content="ゲームのモードを選択するページです。">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="blogin">
+
+  <!-- HEADER (même style que l'index) -->
+  <header>
+    <nav>
+      <a class="brand" href="index.html"><img src="image/HatsuonNoTabiJaune2.gif" alt="Logo"></a>
+      <div class="top-nav">
+        <a href="index.html">ホーム</a>
+        <a href="progress.html">進捗</a>
+        <a href="success.html">成績</a>
+        <a href="setting.html">設定</a>
+        <a href="login.html">ログアウト</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="mode-container">
+      <h1 class="mode-title">ゲームモードを選ぶ</h1>
+      <p class="mode-intro">
+        遊びたいモードを選択してください。<br>
+        下の「スタート」ボタンを押すと、選んだゲームが選んだモードで始まります。
+      </p>
+
+      <!-- Nom du jeu choisi (rempli en JS) -->
+      <div class="mode-game-info">
+        <p>選択中のゲーム：<span id="mode-game-name">読み込み中…</span></p>
+      </div>
+
+      <form id="mode-form" class="mode-form">
+        <h2 class="mode-subtitle">モードを選択</h2>
+
+        <div class="mode-options">
+          <!-- タイムアタック -->
+          <label class="mode-card">
+            <input type="radio" name="mode" value="time-attack" class="mode-radio">
+            <div class="mode-card-content">
+              <span class="mode-name">タイムアタック</span>
+              <span class="mode-tag">制限時間あり</span>
+              <p class="mode-desc">
+                一定時間内にできるだけ高いスコアを目指します。<br>
+                時間がゼロになるとゲーム終了です。
+              </p>
+            </div>
+          </label>
+
+          <!-- サバイバル -->
+          <label class="mode-card">
+            <input type="radio" name="mode" value="survival" class="mode-radio">
+            <div class="mode-card-content">
+              <span class="mode-name">サバイバル（3ライフ）</span>
+              <span class="mode-tag">時間制限なし</span>
+              <p class="mode-desc">
+                3回ミスするとゲームオーバーになります。<br>
+                時間の制限はありませんが、ライフに気をつけてください。
+              </p>
+            </div>
+          </label>
+        </div>
+
+        <div class="mode-summary">
+          <p>ゲーム：<span id="summary-game">未選択</span></p>
+          <p>モード：<span id="summary-mode">未選択</span></p>
+        </div>
+
+        <button type="submit" class="mode-start-button">スタート</button>
+        <p class="mode-back-link">
+          <a href="index.html">← ゲーム選択に戻る</a>
+        </p>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    // --- Récupérer les paramètres de l'URL (jeu + titre) ---
+    const params = new URLSearchParams(window.location.search);
+    const gamePage = params.get("game");   // ex: "alphabetGame.html"
+    const gameTitle = params.get("title")  // ex: "アルファベットのゲーム"
+                        ? decodeURIComponent(params.get("title"))
+                        : "ゲーム";
+
+    const gameNameSpan = document.getElementById("mode-game-name");
+    const summaryGame = document.getElementById("summary-game");
+    const summaryMode = document.getElementById("summary-mode");
+    const form = document.getElementById("mode-form");
+
+    // Si aucun jeu n'est passé, on renvoie vers l'index
+    if (!gamePage) {
+      gameNameSpan.textContent = "ゲームが選択されていません。メニューに戻ります。";
+      setTimeout(() => {
+        window.location.href = "index.html";
+      }, 1500);
+    } else {
+      gameNameSpan.textContent = gameTitle;
+      summaryGame.textContent = gameTitle;
+    }
+
+    // Texte en japonais pour chaque mode
+    const MODE_LABELS = {
+      "time-attack": "タイムアタック（制限時間あり）",
+      "survival": "サバイバル（3ライフ / 時間制限なし）"
+    };
+
+    // Mise à jour du résumé quand on change de mode
+    const modeRadios = document.querySelectorAll("input[name='mode']");
+    modeRadios.forEach(radio => {
+      radio.addEventListener("change", () => {
+        const value = radio.value;
+        summaryMode.textContent = MODE_LABELS[value] || "未選択";
+      });
+    });
+
+    // Soumission du formulaire
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      if (!gamePage) return; // sécurité
+
+      const checkedMode = document.querySelector("input[name='mode']:checked");
+      if (!checkedMode) {
+        alert("モードを選択してください。");
+        return;
+      }
+
+      const modeValue = checkedMode.value; // "time-attack" ou "survival"
+      // On envoie vers la page du jeu, avec ?mode=...
+      const targetUrl = `${gamePage}?mode=${encodeURIComponent(modeValue)}`;
+      window.location.href = targetUrl;
+    });
+  </script>
+
+</body>
+</html>

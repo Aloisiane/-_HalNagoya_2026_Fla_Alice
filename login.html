@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ログイン｜発音の旅</title>
+  <meta name="description" content="発音の旅のログインページ">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="blogin">
+  <!-- HEADER -->
+  <header>
+    <nav>
+      <a class="brand" href="login.html"><img src="image/OtoJaune.gif" alt="ロゴ"></a>
+      <div class="top-nav">
+        <a href="login.html">ログイン</a>
+        <a href="register.html">新規登録</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- MAIN -->
+  <main class="auth-page">
+    <section class="auth-card">
+      <h1 class="auth-title">
+        <img class="title-img" src="image/Login.gif" alt="ログイン">
+      </h1>
+      <p class="auth-lead">
+        メールアドレスとパスワードを入力して、<br>
+        「発音の旅」をはじめましょう。
+      </p>
+
+      <!-- FORMULAIRE CONNECTÉ À NODE.JS -->
+      <form class="auth-form" id="loginForm">
+        <div class="auth-field">
+          <label for="email">メールアドレス</label>
+          <input type="email" id="email" name="email" required placeholder="example@mail.com">
+        </div>
+
+        <div class="auth-field">
+          <label for="password">パスワード</label>
+          <input type="password" id="password" name="password" required placeholder="パスワードを入力">
+        </div>
+
+        <p id="loginMessage" class="form-message form-message--error form-message--center form-message--spaced"></p>
+
+        <button type="submit" class="auth-btn primary-btn">ログイン</button>
+      </form>
+
+      <div class="auth-footer-link">
+        <p>まだアカウントをお持ちではありませんか？</p>
+        <a href="register.html">新規登録はこちら</a>
+      </div>
+    </section>
+  </main>
+
+<script>
+document.getElementById("loginForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    const response = await fetch("http://localhost:3000/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+    });
+
+    const data = await response.json();
+    const msg = document.getElementById("loginMessage");
+
+    if (data.message === "Connexion réussie") {
+        msg.style.color = "green";
+        msg.textContent = "ログイン成功！処理中…";
+
+        // Stocker le token et infos utilisateur
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+
+        // Redirection vers index.html
+        setTimeout(() => {
+            window.location.href = "index.html";
+        }, 1500);
+    } else {
+        msg.style.color = "red";
+        msg.textContent = "メールアドレスまたはパスワードが正しくありません。";
+    }
+});
+</script>
+
+</body>
+</html>

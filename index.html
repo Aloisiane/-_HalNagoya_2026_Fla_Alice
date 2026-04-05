@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>発音の旅</title>
+  <meta name="description" content="発音の旅のメニュー">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <nav>
+      <a class="brand" href="index.html"><img src="image/HatsuonNoTabiJaune2.gif" alt="Logo"></a>
+
+      <div class="top-nav">
+        <a href="index.html" class="active">ホーム</a>
+        <a href="progress.html">進捗</a>
+        <a href="success.html">成績</a>
+        <a href="setting.html" >設定</a>
+        <a href="login.html">ログアウト</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- TITRE / CONTENU -->
+  <main>
+
+
+    <!-- PANNEAU : 学習 -->
+<div class="button-row">
+
+  <!-- ===== ETUDE ===== -->
+  <div class="big-btn etude">
+
+    <input type="checkbox" id="toggle-etude" hidden>
+    <label for="toggle-etude" class="hitbox"></label>
+    <a href="alphabetStudy.html" class="side-btn left">アルファベットの学習</a>
+    <a href="frenchWordStudy.html" class="side-btn right">フランス語の単語の学習</a>
+
+
+  </div>
+
+  <!-- ===== JEU ===== -->
+  <div class="big-btn Bjeu">
+
+    <input type="checkbox" id="toggle-jeu" hidden>
+    <label for="toggle-jeu" class="hitbox"></label>
+
+    <a href="modedejeu.html?game=alphabetGame.html&title=アルファベットのゲーム" class="side-btn left">
+      アルファベットのゲーム
+    </a>
+
+    <a href="modedejeu.html?game=frenchWordGame.html" class="side-btn right">
+      単語のゲーム
+    </a>
+
+  </div>
+
+</div>
+
+
+
+
+
+     <!-- 
+     <div class="button-wrapper">
+<input type="checkbox" id="toggle" hidden>
+ 
+  <label for="toggle" class="main-btn">MENU</label>
+ 
+  <a href="alphabetStudy.html" class="side-btn left"><img src="image/alphabetgiftest.gif" alt="アルファベットの学習"></a>
+<a href="frenchWordStudy.html" class="side-btn right">フランス語の単語の学習</a>
+</div>
+-->
+<!-- 
+    <div id="study-panel" class="dropdown-panel">
+      <a href="alphabetStudy.html">アルファベットの学習</a>
+      <a href="frenchWordStudy.html">フランス語の単語の学習</a>
+
+    </div>
+-->
+    <!-- PANNEAU : ゲーム -->
+  
+
+  </main>
+
+</body>
+</html>

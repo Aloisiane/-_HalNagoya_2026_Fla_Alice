@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>単語学習｜発音の旅</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="blogin">
+
+  <!-- HEADER -->
+  <header>
+    <nav>
+      <a class="brand" href="index.html"><img src="image/HatsuonNoTabiJaune2.gif" alt="ロゴ"></a>
+      <div class="top-nav">
+        <a href="index.html">ホーム</a>
+        <a href="progress.html">進捗</a>
+        <a href="success.html">成績</a>
+        <a href="setting.html">設定</a>
+        <a href="login.html">ログアウト</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="vocab-page">
+
+    <section class="card">
+      <h2>単語を追加</h2>
+      <p class="lead">ゲームでも利用できるオリジナル単語を登録します。</p>
+      <form id="vocab-form">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="fr_word">フランス語</label>
+            <input id="fr_word" name="fr_word" type="text" required placeholder="ex: manger">
+          </div>
+          <div class="form-group">
+            <label for="pron">発音（カナ / メモ）</label>
+            <input id="pron" name="pron" type="text" placeholder="ex: マンジェ / manjé">
+          </div>
+          <div class="form-group">
+            <label for="jp_word">日本語訳</label>
+            <input id="jp_word" name="jp_word" type="text" required placeholder="例：食べる">
+          </div>
+          <div class="form-group">
+            <label for="category">カテゴリ（任意）</label>
+            <input id="category" name="category" type="text" placeholder="動詞 / 食べ物 / 学校 ...">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="audio_url">音声URL（任意）</label>
+          <input id="audio_url" name="audio_url" type="text" placeholder="https://... (mp3/ogg)">
+        </div>
+        <div class="form-group">
+          <label for="example">例文（任意）</label>
+          <textarea id="example" name="example" rows="2" placeholder="ex: Je veux manger une pomme."></textarea>
+        </div>
+        <div class="actions">
+          <button type="submit" class="btn primary">単語を保存</button>
+        </div>
+        <p id="message" class="message"></p>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>単語リスト（覚えにくい順）</h2>
+      <p class="lead">覚えにくい単語が上に表示されます。検索・絞り込みが可能です。</p>
+
+      <div class="filter-row">
+        <input type="text" id="search" placeholder="検索（フランス語 / 日本語 / カテゴリ）">
+      </div>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>フランス語</th>
+              <th>発音</th>
+              <th>聞く</th>
+              <th>日本語</th>
+              <th>例文</th>
+              <th>スコア</th>
+              <th>アクション</th>
+            </tr>
+          </thead>
+          <tbody id="vocab-table-body">
+            <tr><td colspan="7" class="table-empty-sm">単語がありません。追加してください。</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    const API = "http://localhost:3000";
+
+    // DOM
+    const form = document.getElementById("vocab-form");
+    const messageEl = document.getElementById("message");
+    const tableBody = document.getElementById("vocab-table-body");
+    const searchInput = document.getElementById("search");
+    const submitBtn = form.querySelector('button[type="submit"]');
+    
+    // État pour l'édition
+    let editingWordId = null;
+
+    // Helpers
+    function masteryScore(word) {
+      const attempts = word.attempts || 0;
+      const success = word.success || 0;
+      if (attempts === 0) return 0; // inconnu -> en haut
+      return success / attempts;    // plus faible = plus difficile
+    }
+
+    function scoreBadge(word) {
+      const acc = masteryScore(word);
+      if (word.attempts === 0) return { text: "未プレイ", cls: "score-mid" };
+      if (acc < 0.4) return { text: `苦手 (${Math.round(acc*100)}%)`, cls: "score-low" };
+      if (acc < 0.7) return { text: `普通 (${Math.round(acc*100)}%)`, cls: "score-mid" };
+      return { text: `得意 (${Math.round(acc*100)}%)`, cls: "score-high" };
+    }
+
+    function speak(word) {
+      const synth = window.speechSynthesis;
+      if (!synth) return alert("音声合成がサポートされていません");
+      synth.cancel();
+      const u = new SpeechSynthesisUtterance(word);
+      u.lang = "fr-FR";
+      u.rate = 0.95;
+      synth.speak(u);
+    }
+
+    // Sync games with fetched words
+    function syncWordsToGameSettings(words) {
+      const settings = JSON.parse(localStorage.getItem("gameSettings") || "{}");
+      const list = words.map(w => w.fr).filter(Boolean);
+      settings.selectedWords = [...new Set(list)];
+      localStorage.setItem("gameSettings", JSON.stringify(settings));
+    }
+
+    function filterWords(words, query) {
+      const q = (query || "").toLowerCase().trim();
+      if (!q) return words;
+      return words.filter(w =>
+        (w.fr || "").toLowerCase().includes(q) ||
+        (w.jp || "").toLowerCase().includes(q) ||
+        (w.category || "").toLowerCase().includes(q)
+      );
+    }
+
+    function renderTable(list) {
+      tableBody.innerHTML = "";
+      if (!list.length) {
+        tableBody.innerHTML = `<tr><td colspan="7" class="table-empty-sm">単語がありません。追加してください。</td></tr>`;
+        return;
+      }
+
+      const sorted = [...list].sort((a, b) => masteryScore(a) - masteryScore(b));
+
+      sorted.forEach(word => {
+        const tr = document.createElement("tr");
+
+        // French
+        const tdFr = document.createElement("td");
+        tdFr.innerHTML = `<strong>${word.fr || ""}</strong><br><span class="chip">${word.category || ""}</span>`;
+
+        // Pron
+        const tdPron = document.createElement("td");
+        tdPron.textContent = word.pron || "";
+
+        // Play
+        const tdPlay = document.createElement("td");
+        const playBtn = document.createElement("button");
+        playBtn.className = "play-btn";
+        playBtn.textContent = "▶";
+        playBtn.addEventListener("click", () => {
+          if (word.audio_url) {
+            const audio = new Audio(word.audio_url);
+            audio.play().catch(() => speak(word.fr));
+          } else {
+            speak(word.fr);
+          }
+        });
+        tdPlay.appendChild(playBtn);
+
+        // Japanese
+        const tdJp = document.createElement("td");
+        tdJp.textContent = word.jp || "";
+
+        // Example toggle
+        const tdEx = document.createElement("td");
+        const toggleBtn = document.createElement("button");
+        toggleBtn.className = "toggle-example";
+        toggleBtn.textContent = word.example ? "表示 / 非表示" : "-";
+        const ex = document.createElement("div");
+        ex.className = "example-text";
+        ex.textContent = word.example || "";
+        toggleBtn.addEventListener("click", () => ex.classList.toggle("show"));
+        tdEx.appendChild(toggleBtn);
+        tdEx.appendChild(ex);
+
+        // Score
+        const tdScore = document.createElement("td");
+        const badge = scoreBadge(word);
+        tdScore.innerHTML = `<span class="score-badge ${badge.cls}">${badge.text}</span><br><small>${word.success || 0} / ${word.attempts || 0}</small>`;
+
+        // Actions
+        const tdAct = document.createElement("td");
+        tdAct.className = "table-actions";
+        const btnGood = document.createElement("button");
+        btnGood.className = "btn ghost";
+        btnGood.textContent = "覚えた";
+        btnGood.addEventListener("click", () => updateStats(word.id, true));
+        const btnBad = document.createElement("button");
+        btnBad.className = "btn ghost";
+        btnBad.textContent = "忘れた";
+        btnBad.addEventListener("click", () => updateStats(word.id, false));
+        const btnEdit = document.createElement("button");
+        btnEdit.className = "btn ghost";
+        btnEdit.textContent = "修正";
+        btnEdit.addEventListener("click", () => editWord(word));
+        const btnDelete = document.createElement("button");
+        btnDelete.className = "btn ghost";
+        btnDelete.textContent = "削除";
+        btnDelete.style.color = "#d93025";
+        btnDelete.addEventListener("click", () => deleteWord(word.id));
+        tdAct.appendChild(btnGood);
+        tdAct.appendChild(btnBad);
+        tdAct.appendChild(btnEdit);
+        tdAct.appendChild(btnDelete);
+
+        tr.appendChild(tdFr);
+        tr.appendChild(tdPron);
+        tr.appendChild(tdPlay);
+        tr.appendChild(tdJp);
+        tr.appendChild(tdEx);
+        tr.appendChild(tdScore);
+        tr.appendChild(tdAct);
+
+        tableBody.appendChild(tr);
+      });
+    }
+
+    async function fetchWords() {
+      const res = await fetch(`${API}/words`);
+      const data = await res.json();
+      // Persist locally so settings / jeux peuvent lire en fallback
+      localStorage.setItem("userWords", JSON.stringify(data));
+      syncWordsToGameSettings(data);
+      return data;
+    }
+
+    async function seedIfEmpty(words) {
+      if (words.length > 0) return words;
+      // Seed défaut côté client (optionnel)
+      await Promise.all(DEFAULT_SEED.map(w =>
+        fetch(`${API}/words`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(w)
+        })
+      ));
+      return fetchWords();
+    }
+
+    const DEFAULT_SEED = [
+      { fr: "bonjour", jp: "こんにちは" },
+      { fr: "merci", jp: "ありがとう" },
+      { fr: "au revoir", jp: "さようなら" },
+      { fr: "manger", jp: "食べる" },
+      { fr: "boire", jp: "飲む" },
+      { fr: "chien", jp: "犬" },
+      { fr: "chat", jp: "猫" },
+      { fr: "pomme", jp: "りんご" },
+      { fr: "eau", jp: "水" },
+      { fr: "maison", jp: "家" }
+    ];
+
+    async function updateStats(id, successFlag) {
+      await fetch(`${API}/words/${id}/stats`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ attempts: 1, success: successFlag ? 1 : 0 })
+      });
+      const words = await fetchWords();
+      renderTable(filterWords(words, searchInput.value));
+    }
+
+    async function deleteWord(id) {
+      if (!confirm("この単語を削除しますか？")) return;
+      try {
+        const res = await fetch(`${API}/words/${id}`, {
+          method: "DELETE"
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          throw new Error(data.message || "削除に失敗しました");
+        }
+        const words = await fetchWords();
+        renderTable(filterWords(words, searchInput.value));
+      } catch (err) {
+        console.error(err);
+        alert(err.message || "サーバーエラー");
+      }
+    }
+
+    function editWord(word) {
+      editingWordId = word.id;
+      document.getElementById("fr_word").value = word.fr || "";
+      document.getElementById("pron").value = word.pron || "";
+      document.getElementById("jp_word").value = word.jp || "";
+      document.getElementById("category").value = word.category || "";
+      document.getElementById("example").value = word.example || "";
+      document.getElementById("audio_url").value = word.audio_url || "";
+      submitBtn.textContent = "単語を更新";
+      form.scrollIntoView({ behavior: "smooth" });
+    }
+
+    function resetForm() {
+      editingWordId = null;
+      form.reset();
+      submitBtn.textContent = "単語を保存";
+    }
+
+    // Search
+    searchInput.addEventListener("input", async () => {
+      const words = await fetchWords();
+      renderTable(filterWords(words, searchInput.value));
+    });
+
+    // Submit
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      messageEl.textContent = "";
+      messageEl.className = "message";
+
+      const fr = document.getElementById("fr_word").value.trim();
+      const pron = document.getElementById("pron").value.trim();
+      const jp = document.getElementById("jp_word").value.trim();
+      const cat = document.getElementById("category").value.trim();
+      const ex = document.getElementById("example").value.trim();
+      const audio = document.getElementById("audio_url").value.trim();
+
+      if (!fr || !jp) {
+        messageEl.textContent = "フランス語と日本語は必須です。";
+        messageEl.classList.add("error");
+        return;
+      }
+
+      try {
+        const url = editingWordId ? `${API}/words/${editingWordId}` : `${API}/words`;
+        const method = editingWordId ? "PUT" : "POST";
+        
+        const res = await fetch(url, {
+          method: method,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            fr,
+            pron,
+            jp,
+            category: cat,
+            example: ex,
+            audio_url: audio
+          })
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          throw new Error(data.message || (editingWordId ? "更新に失敗しました" : "保存に失敗しました"));
+        }
+        messageEl.textContent = editingWordId ? "単語を更新しました！" : "単語を保存しました！";
+        messageEl.classList.add("success");
+        resetForm();
+        const words = await fetchWords();
+        renderTable(filterWords(words, searchInput.value));
+      } catch (err) {
+        console.error(err);
+        messageEl.textContent = err.message || "サーバーエラー";
+        messageEl.classList.add("error");
+      }
+    });
+
+    // Init
+    (async function init() {
+      try {
+        const words = await fetchWords();
+        const list = await seedIfEmpty(words);
+        renderTable(list);
+      } catch (e) {
+        console.error(e);
+        messageEl.textContent = "サーバーに接続できません。";
+        messageEl.classList.add("error");
+      }
+    })();
+  </script>
+
+</body>
+</html>

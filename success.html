@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>成績・達成｜発音の旅</title>
+  <meta name="description" content="発音の旅の成績と達成ページ">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body class="blogin">
+
+  <!-- HEADER -->
+  <header>
+    <nav>
+      <a class="brand" href="index.html">
+        <img src="image/HatsuonNoTabiJaune2.gif" alt="ロゴ">
+      </a>
+
+      <div class="top-nav">
+        <a href="index.html">ホーム</a>
+        <a href="progress.html">進捗</a>
+        <a href="success.html" class="active">成績</a>
+        <a href="setting.html" >設定</a>
+        <a href="login.html">ログアウト</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- MAIN -->
+  <main class="success-page">
+
+    <!-- ✅ 1 seule grande carte -->
+    <section class="success-section">
+      <h1 class="success-title">成績・達成</h1>
+      <p class="success-desc">
+        あなたの達成状況、バッジ、目標、そして今週のチャレンジを確認できます。<br>
+        新しいバッジを獲得して、さらなる高みを目指しましょう！
+      </p>
+
+      <!-- 1) サマリー -->
+      <div class="setting-item">
+        <div class="setting-label">
+          <span class="setting-label-text">ユーザー概要</span>
+          <span class="setting-value">Summary</span>
+        </div>
+
+        <div class="mini-grid">
+          <div class="mini-card">
+            <strong id="user-name">ゲスト</strong>
+            <span>ユーザー名</span>
+          </div>
+          <div class="mini-card">
+            <strong><span id="total-badges">0</span> / <span id="total-badges-available">12</span></strong>
+            <span>獲得バッジ</span>
+          </div>
+          <div class="mini-card">
+            <strong><span id="overall-best">0</span> pt</strong>
+            <span>総合ベストスコア</span>
+          </div>
+          <div class="mini-card">
+            <strong><span id="achieved-goals">0</span> / <span id="total-goals">0</span></strong>
+            <span>達成した目標</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2) バッジ -->
+      <div class="setting-item">
+        <div class="setting-label">
+          <span class="setting-label-text">バッジ・トロフィー</span>
+          <span class="setting-value">Badges</span>
+        </div>
+        <p class="text-note-tight">
+          特定の条件を達成するとバッジを獲得できます。すべてのバッジを集めましょう！
+        </p>
+        <div class="badges-grid" id="badges-container">
+          <!-- JS -->
+        </div>
+      </div>
+
+      <!-- 3) 達成状況（records） -->
+      <div class="setting-item">
+        <div class="setting-label">
+          <span class="setting-label-text">達成状況</span>
+          <span class="setting-value">Records</span>
+        </div>
+
+        <div class="mini-grid">
+          <div class="mini-card">
+            <strong id="best-score-display">0 pt</strong>
+            <span>🏆 最高スコア</span>
+          </div>
+          <div class="mini-card">
+            <strong id="total-plays-display">0 回</strong>
+            <span>🎯 総プレイ回数</span>
+          </div>
+          <div class="mini-card">
+            <strong id="avg-score-display">0 pt</strong>
+            <span>⭐ 平均スコア</span>
+          </div>
+          <div class="mini-card">
+            <strong id="streak-days">0 日</strong>
+            <span>🔥 連続プレイ日数</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4) 今週のチャレンジ -->
+      <div class="setting-item">
+        <div class="setting-label">
+          <span class="setting-label-text">今週のチャレンジ</span>
+          <span class="setting-value">Challenges</span>
+        </div>
+        <p class="text-note-tight">
+          毎週新しいチャレンジが登場します。達成するとボーナスポイントがもらえます！
+        </p>
+        <div id="challenges-container"></div>
+      </div>
+
+      <!-- 5) 目標設定 -->
+      <div class="setting-item">
+        <div class="setting-label">
+          <span class="setting-label-text">目標設定</span>
+          <span class="setting-value">Goals</span>
+        </div>
+        <p class="text-note-tight">
+          自分の目標を設定して、達成度を確認しましょう。
+        </p>
+
+        <!-- Alphabet goal -->
+        <div class="goal-item">
+          <div class="goal-header">
+            <span class="goal-name">アルファベットゲームの目標スコア</span>
+            <span class="goal-status" id="goal-alphabet-status">未設定</span>
+          </div>
+
+          <div class="goal-progress-text">
+            <span id="goal-alphabet-current">0</span> / <span id="goal-alphabet-target">-</span> pt
+          </div>
+
+          <div class="progress-bar">
+            <div class="progress-bar-fill" id="goal-alphabet-bar"></div>
+          </div>
+
+          <div class="goal-controls">
+            <input
+              type="number"
+              id="goal-alphabet-input"
+              class="goal-input"
+              placeholder="目標スコアを入力"
+              min="0"
+            >
+            <button id="save-goal-alphabet" class="goal-btn">設定</button>
+          </div>
+        </div>
+
+        <!-- Word goal -->
+        <div class="goal-item goal-item--spaced">
+          <div class="goal-header">
+            <span class="goal-name">単語ゲームの目標スコア</span>
+            <span class="goal-status" id="goal-word-status">未設定</span>
+          </div>
+
+          <div class="goal-progress-text">
+            <span id="goal-word-current">0</span> / <span id="goal-word-target">-</span> pt
+          </div>
+
+          <div class="progress-bar">
+            <div class="progress-bar-fill" id="goal-word-bar"></div>
+          </div>
+
+          <div class="goal-controls">
+            <input
+              type="number"
+              id="goal-word-input"
+              class="goal-input"
+              placeholder="目標スコアを入力"
+              min="0"
+            >
+            <button id="save-goal-word" class="goal-btn">設定</button>
+          </div>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <script>
+    // --- Définition des badges ---
+    const BADGES = [
+      { id: "first-play", icon: "🎮", name: "初プレイ", desc: "初めてゲームをプレイ", condition: (stats) => stats.totalPlays >= 1 },
+      { id: "score-50", icon: "⭐", name: "スコア50", desc: "50ポイント達成", condition: (stats) => stats.bestScore >= 50 },
+      { id: "score-100", icon: "🏆", name: "スコア100", desc: "100ポイント達成", condition: (stats) => stats.bestScore >= 100 },
+      { id: "score-200", icon: "👑", name: "スコア200", desc: "200ポイント達成", condition: (stats) => stats.bestScore >= 200 },
+      { id: "plays-10", icon: "🎯", name: "10回プレイ", desc: "10回ゲームをプレイ", condition: (stats) => stats.totalPlays >= 10 },
+      { id: "plays-50", icon: "🔥", name: "50回プレイ", desc: "50回ゲームをプレイ", condition: (stats) => stats.totalPlays >= 50 },
+      { id: "plays-100", icon: "💎", name: "100回プレイ", desc: "100回ゲームをプレイ", condition: (stats) => stats.totalPlays >= 100 },
+      { id: "streak-7", icon: "📅", name: "7日連続", desc: "7日連続でプレイ", condition: (stats) => stats.streakDays >= 7 },
+      { id: "streak-30", icon: "🗓️", name: "30日連続", desc: "30日連続でプレイ", condition: (stats) => stats.streakDays >= 30 },
+      { id: "perfect-alphabet", icon: "🔤", name: "アルファベットマスター", desc: "アルファベットゲームで100pt", condition: (stats) => stats.alphabetBest >= 100 },
+      { id: "perfect-word", icon: "📚", name: "単語マスター", desc: "単語ゲームで100pt", condition: (stats) => stats.wordBest >= 100 },
+      { id: "both-modes", icon: "🎪", name: "両モード制覇", desc: "両モードで50pt以上", condition: (stats) => stats.timeAttackBest >= 50 && stats.survivalBest >= 50 }
+    ];
+
+    // --- Définition des défis hebdomadaires ---
+    function generateWeeklyChallenges() {
+      const weekStart = getWeekStart();
+      const stored = localStorage.getItem(`weeklyChallenges_${weekStart}`);
+      if (stored) return JSON.parse(stored);
+
+      const challenges = [
+        { id: "weekly-plays", title: "今週5回プレイ", description: "今週中に5回ゲームをプレイする", target: 5, reward: "50pt", type: "plays" },
+        { id: "weekly-score", title: "今週平均80pt", description: "今週の平均スコアを80ポイント以上にする", target: 80, reward: "100pt", type: "avgScore" },
+        { id: "weekly-best", title: "今週ベスト100pt", description: "今週中に100ポイント以上のスコアを出す", target: 100, reward: "150pt", type: "bestScore" }
+      ];
+
+      localStorage.setItem(`weeklyChallenges_${weekStart}`, JSON.stringify(challenges));
+      return challenges;
+    }
+
+    function getWeekStart() {
+      const now = new Date();
+      const day = now.getDay();
+      const diff = now.getDate() - day;
+      const weekStart = new Date(now.setDate(diff));
+      return weekStart.toISOString().split('T')[0];
+    }
+
+    // --- Chargement des scores ---
+    function getLocalScores() {
+      const alphabetScores = JSON.parse(localStorage.getItem("alphabetScores") || "[]");
+      const wordScores = JSON.parse(localStorage.getItem("wordScores") || "[]");
+      const allScores = [...alphabetScores, ...wordScores];
+      return { alphabetScores, wordScores, allScores };
+    }
+
+    async function fetchScores() {
+      const local = getLocalScores();
+      const token = localStorage.getItem("token");
+      if (!token) return local;
+
+      try {
+        const response = await fetch("http://localhost:3000/scores", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (!response.ok) throw new Error("HTTP " + response.status);
+        const rows = await response.json();
+        const mapped = rows.map(row => ({
+          game: row.game,
+          mode: row.mode,
+          score: row.score,
+          date: row.played_at
+        }));
+        const alphabetScores = mapped.filter(s => s.game === "alphabet");
+        const wordScores = mapped.filter(s => s.game === "word");
+        const allScores = mapped;
+        return { alphabetScores, wordScores, allScores };
+      } catch (e) {
+        console.error("Erreur fetch scores:", e);
+        return local;
+      }
+    }
+
+    // --- Calcul des statistiques ---
+    function calculateStats(allScores) {
+      const alphabetScores = allScores.filter(s => s.game === "alphabet");
+      const wordScores = allScores.filter(s => s.game === "word");
+
+      const bestScore = allScores.length > 0 ? Math.max(...allScores.map(s => s.score || 0)) : 0;
+      const totalPlays = allScores.length;
+      const avgScore = totalPlays > 0
+        ? Math.round(allScores.reduce((sum, s) => sum + (s.score || 0), 0) / totalPlays)
+        : 0;
+
+      const alphabetBest = alphabetScores.length > 0 ? Math.max(...alphabetScores.map(s => s.score || 0)) : 0;
+      const wordBest = wordScores.length > 0 ? Math.max(...wordScores.map(s => s.score || 0)) : 0;
+
+      const timeAttackBest = allScores.filter(s => s.mode === "time-attack").reduce((max, s) => Math.max(max, s.score || 0), 0);
+      const survivalBest = allScores.filter(s => s.mode === "survival").reduce((max, s) => Math.max(max, s.score || 0), 0);
+
+      const streakDays = calculateStreak(allScores);
+
+      return { bestScore, totalPlays, avgScore, alphabetBest, wordBest, timeAttackBest, survivalBest, streakDays };
+    }
+
+    function calculateStreak(scores) {
+      if (scores.length === 0) return 0;
+
+      const dates = [...new Set(scores.map(s => {
+        const d = new Date(s.date || Date.now());
+        return d.toISOString().split('T')[0];
+      }))].sort().reverse();
+
+      if (dates.length === 0) return 0;
+
+      let streak = 0;
+      const today = new Date().toISOString().split('T')[0];
+      let expectedDate = today;
+
+      for (const date of dates) {
+        if (date === expectedDate) {
+          streak++;
+          const d = new Date(date);
+          d.setDate(d.getDate() - 1);
+          expectedDate = d.toISOString().split('T')[0];
+        } else {
+          break;
+        }
+      }
+      return streak;
+    }
+
+    // --- Affichage des badges ---
+    function displayBadges(stats) {
+      const container = document.getElementById("badges-container");
+      const unlockedCount = BADGES.filter(b => b.condition(stats)).length;
+
+      document.getElementById("total-badges").textContent = unlockedCount;
+      document.getElementById("total-badges-available").textContent = BADGES.length;
+
+      container.innerHTML = BADGES.map(badge => {
+        const unlocked = badge.condition(stats);
+        return `
+          <div class="badge-item ${unlocked ? 'unlocked' : 'locked'}" title="${badge.desc}">
+            <div class="badge-icon">${badge.icon}</div>
+            <div class="badge-name">${badge.name}</div>
+            <div class="badge-desc">${badge.desc}</div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    // --- Affichage des accomplissements ---
+    function displayAchievements(stats) {
+      document.getElementById("best-score-display").textContent = stats.bestScore + " pt";
+      document.getElementById("total-plays-display").textContent = stats.totalPlays + " 回";
+      document.getElementById("avg-score-display").textContent = stats.avgScore + " pt";
+      document.getElementById("streak-days").textContent = stats.streakDays + " 日";
+      document.getElementById("overall-best").textContent = stats.bestScore;
+    }
+
+    // --- Affichage des défis ---
+    function displayChallenges(stats, allScores) {
+      const challenges = generateWeeklyChallenges();
+      const weekStart = getWeekStart();
+      const weekScores = allScores.filter(s => {
+        const scoreDate = new Date(s.date || 0).toISOString().split('T')[0];
+        return scoreDate >= weekStart;
+      });
+
+      const challengeStats = {
+        plays: weekScores.length,
+        avgScore: weekScores.length > 0
+          ? Math.round(weekScores.reduce((sum, s) => sum + (s.score || 0), 0) / weekScores.length)
+          : 0,
+        bestScore: weekScores.length > 0
+          ? Math.max(...weekScores.map(s => s.score || 0))
+          : 0
+      };
+
+      const container = document.getElementById("challenges-container");
+      container.innerHTML = challenges.map(challenge => {
+        let current = 0;
+        if (challenge.type === "plays") current = challengeStats.plays;
+        else if (challenge.type === "avgScore") current = challengeStats.avgScore;
+        else if (challenge.type === "bestScore") current = challengeStats.bestScore;
+
+        const progress = Math.min(100, (current / challenge.target) * 100);
+        const completed = current >= challenge.target;
+
+        return `
+          <div class="challenge-card ${completed ? 'completed' : ''}">
+            <div class="challenge-header">
+              <div class="challenge-title">${challenge.title}</div>
+              <div class="challenge-reward">+${challenge.reward}</div>
+            </div>
+            <p class="challenge-desc">${challenge.description}</p>
+            <div class="challenge-progress">
+              <div class="challenge-progress-bar">
+                <div class="challenge-progress-fill" data-progress="${progress}"></div>
+              </div>
+              <div class="challenge-stats">
+                <span>${current} / ${challenge.target}</span>
+                <span>${completed ? '✅ 達成！' : Math.round(progress) + '%'}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
+      container.querySelectorAll(".challenge-progress-fill").forEach((bar) => {
+        const width = parseFloat(bar.dataset.progress || "0");
+        if (!Number.isNaN(width)) {
+          bar.style.width = `${width}%`;
+        }
+      });
+    }
+
+    // --- Gestion des objectifs ---
+    function loadGoals(stats) {
+      const goals = JSON.parse(localStorage.getItem("gameGoals") || "{}");
+
+      if (goals.alphabet) {
+        document.getElementById("goal-alphabet-input").value = goals.alphabet;
+        document.getElementById("goal-alphabet-target").textContent = goals.alphabet;
+        const current = stats.alphabetBest;
+        const progress = Math.min(100, (current / goals.alphabet) * 100);
+        document.getElementById("goal-alphabet-current").textContent = current;
+        document.getElementById("goal-alphabet-bar").style.width = progress + "%";
+
+        if (current >= goals.alphabet) {
+          document.getElementById("goal-alphabet-status").textContent = "✅ 達成";
+          document.getElementById("goal-alphabet-status").className = "goal-status achieved";
+        } else {
+          document.getElementById("goal-alphabet-status").textContent = "進行中";
+          document.getElementById("goal-alphabet-status").className = "goal-status in-progress";
+        }
+      }
+
+      if (goals.word) {
+        document.getElementById("goal-word-input").value = goals.word;
+        document.getElementById("goal-word-target").textContent = goals.word;
+        const current = stats.wordBest;
+        const progress = Math.min(100, (current / goals.word) * 100);
+        document.getElementById("goal-word-current").textContent = current;
+        document.getElementById("goal-word-bar").style.width = progress + "%";
+
+        if (current >= goals.word) {
+          document.getElementById("goal-word-status").textContent = "✅ 達成";
+          document.getElementById("goal-word-status").className = "goal-status achieved";
+        } else {
+          document.getElementById("goal-word-status").textContent = "進行中";
+          document.getElementById("goal-word-status").className = "goal-status in-progress";
+        }
+      }
+
+      let achieved = 0;
+      let total = 0;
+      if (goals.alphabet) { total++; if (stats.alphabetBest >= goals.alphabet) achieved++; }
+      if (goals.word) { total++; if (stats.wordBest >= goals.word) achieved++; }
+      document.getElementById("achieved-goals").textContent = achieved;
+      document.getElementById("total-goals").textContent = total;
+    }
+
+    function saveGoal(type) {
+      const input = document.getElementById(`goal-${type}-input`);
+      const value = parseInt(input.value) || 0;
+
+      if (value <= 0) {
+        alert("0より大きい値を入力してください");
+        return;
+      }
+
+      const goals = JSON.parse(localStorage.getItem("gameGoals") || "{}");
+      goals[type] = value;
+      localStorage.setItem("gameGoals", JSON.stringify(goals));
+
+      loadGoals();
+      alert("目標を保存しました！");
+    }
+
+    // --- Initialisation ---
+    async function init() {
+      const userStr = localStorage.getItem("user");
+      if (userStr) {
+        try {
+          const user = JSON.parse(userStr);
+          document.getElementById("user-name").textContent = user.name || "ゲスト";
+        } catch (e) {
+          console.error("Erreur parsing user:", e);
+        }
+      }
+
+      const { allScores } = await fetchScores();
+      const stats = calculateStats(allScores);
+      displayBadges(stats);
+      displayAchievements(stats);
+      displayChallenges(stats, allScores);
+      loadGoals(stats);
+    }
+
+    document.getElementById("save-goal-alphabet").addEventListener("click", () => saveGoal("alphabet"));
+    document.getElementById("save-goal-word").addEventListener("click", () => saveGoal("word"));
+    window.addEventListener("load", () => {
+      init().catch((e) => console.error("Erreur init:", e));
+    });
+  </script>
+
+</body>
+</html>

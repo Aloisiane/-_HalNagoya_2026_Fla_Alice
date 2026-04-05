@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Alphabet Français – Audio Auto</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body class="blogin">
+  <header>
+    <nav>
+      <a class="brand" href="index.html">
+        <img src="image/HatsuonNoTabiJaune2.gif" alt="Logo">
+      </a>
+
+      <div class="top-nav">
+        <a href="index.html">ホーム</a>
+        <a href="progress.html">進捗</a>
+        <a href="success.html">成績</a>
+        <a href="setting.html" >設定</a>
+        <a href="login.html">ログアウト</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="study-page">
+    <section class="study-card">
+      <h1 class="study-title">Alphabet Français (フランス語アルファベット)</h1>
+      <p class="study-desc">
+        文字をクリックするとフランス語の発音が聞こえます。<br>
+        Cliquez sur une lettre pour écouter sa prononciation.
+      </p>
+
+      <!-- Panneau d’info -->
+      <div class="setting-item">
+        <div class="setting-label">
+          <span class="setting-label-text">発音パネル</span>
+          <span class="setting-value">Pronunciation</span>
+        </div>
+
+        <div class="info-panel">
+          <div class="info-left">
+            <div class="big-letter" id="selected-letter">A</div>
+            <div class="pronunciation" id="selected-pron">a</div>
+            <div class="hint" id="selected-hint">Clique sur une lettre</div>
+          </div>
+
+          <button class="speak-btn" id="speak-again">もう一度聞く</button>
+        </div>
+      </div>
+
+      <!-- Alphabet -->
+      <div class="setting-item">
+        <div class="setting-label">
+          <span class="setting-label-text">アルファベット</span>
+          <span class="setting-value">A → Z</span>
+        </div>
+
+        <div class="alphabet-grid" id="alphabet"></div>
+      </div>
+    </section>
+  </main>
+
+<script>
+  // Année automatique
+  document.getElementById("year").textContent = new Date().getFullYear();
+</script>
+  <script>
+    // Alphabet français
+    const letters = [
+      "A","B","C","D","E","F","G","H","I","J","K","L","M",
+      "N","O","P","Q","R","S","T","U","V","W","X","Y","Z"
+    ];
+
+    // Prononciation correcte des lettres françaises
+    /**
+    const pronunciations = {
+      A: "a",
+      B: "bé",
+      C: "cé",
+      D: "dé",
+      E: "e",
+      F: "effe",
+      G: "gé",
+      H: "ache",
+      I: "i",
+      J: "ji",
+      K: "ka",
+      L: "elle",
+      M: "emme",
+      N: "enne",
+      O: "o",
+      P: "pé",
+      Q: "cul",
+      R: "air",
+      S: "esse",
+      T: "té",
+      U: "u",
+      V: "vé",
+      W: "double vé",
+      X: "iks",
+      Y: "igrec",
+      Z: "zède"
+    }; */
+
+    // Prononciation (表記はカタカナ)
+const pronunciations = {
+  A: "ア",
+  B: "ベ",
+  C: "セ",
+  D: "デ",
+  E: "ウ",
+  F: "エフ",
+  G: "ジェ",
+  H: "アッシュ",
+  I: "イ",
+  J: "ジ",
+  K: "カ",
+  L: "エル",
+  M: "エム",
+  N: "エヌ",
+  O: "オ",
+  P: "ペ",
+  Q: "キュ",
+  R: "エール",
+  S: "エス",
+  T: "テ",
+  U: "ユ",
+  V: "ヴェ",
+  W: "ドゥブル・ヴェ",
+  X: "イクス",
+  Y: "イグレック",
+  Z: "ゼド"
+};
+// Prononciation pour l’audio (français)
+const pronunciationsAudio = {
+  A: "a",
+  B: "bé",
+  C: "cé",
+  D: "dé",
+  E: "e",
+  F: "effe",
+  G: "gé",
+  H: "ache",
+  I: "i",
+  J: "ji",
+  K: "ka",
+  L: "elle",
+  M: "emme",
+  N: "enne",
+  O: "o",
+  P: "pé",
+  Q: "cul",
+  R: "air",
+  S: "esse",
+  T: "té",
+  U: "u",
+  V: "vé",
+  W: "double vé",
+  X: "iks",
+  Y: "igrec",
+  Z: "zède"
+};
+    // --- Synthèse vocale automatique ---
+    function speak(text) {
+      if (!text) return;
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = "fr-FR";
+      utter.rate = 0.9;
+      speechSynthesis.cancel(); // évite superpositions
+      speechSynthesis.speak(utter);
+    }
+
+    const container = document.getElementById("alphabet");
+    const selectedLetterEl = document.getElementById("selected-letter");
+    const selectedPronEl = document.getElementById("selected-pron");
+    const selectedHintEl = document.getElementById("selected-hint");
+    const speakAgainBtn = document.getElementById("speak-again");
+
+    let currentLetter = "A";
+
+    function setActive(letter) {
+      currentLetter = letter;
+      selectedLetterEl.textContent = letter;
+      selectedPronEl.textContent = pronunciations[letter] || "";
+      selectedHintEl.textContent = "Clique pour écouter / クリックして聞く";
+
+      document.querySelectorAll(".letter-tile").forEach(tile => {
+        tile.classList.toggle("active", tile.dataset.letter === letter);
+      });
+    }
+
+    letters.forEach(letter => {
+      const div = document.createElement("div");
+      div.className = "letter-tile";
+      div.textContent = letter;
+      div.dataset.letter = letter;
+
+      div.addEventListener("click", () => {
+        setActive(letter);
+        speak(pronunciationsAudio[letter]);
+      });
+
+      container.appendChild(div);
+    });
+
+    speakAgainBtn.addEventListener("click", () => {
+      speak(pronunciationsAudio[currentLetter]);
+    });
+
+    // Initial state
+    window.addEventListener("load", () => {
+      setActive("A");
+    });
+  </script>
+
+</body>
+</html>
